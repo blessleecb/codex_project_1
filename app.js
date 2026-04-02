@@ -301,7 +301,6 @@ function FixedExpensePanel({ fixedCategories, cards, title, subtitle }) {
           "div",
           null,
           h("h3", null, "고정지출 상세"),
-          h("p", null, ".md 파일 기준으로 고정값을 반영한 상세 카드"),
         ),
         h(
           "button",
@@ -604,11 +603,6 @@ function App() {
       h("p", { className: "eyebrow" }, "AUTO LEDGER"),
       h("h1", null, "고정지출 대시보드"),
       h(
-        "p",
-        { className: "hero-copy" },
-        "GitHub Pages 게시용으로 고정 데이터를 묶었습니다. AS-IS, TO-BE, 차이점을 같은 화면에서 안정적으로 비교할 수 있습니다.",
-      ),
-      h(
         "div",
         { className: "tab-bar" },
         h(TabButton, { id: "as_is", activeTab, label: "AS-IS", onSelect: setActiveTab }),
@@ -618,7 +612,7 @@ function App() {
       activeTab === "as_is"
         ? h(HeroSummary, {
             title: "AS-IS 요약",
-            subtitle: "현재 기준으로 조정된 AS-IS 고정지출 구조",
+            subtitle: "맞벌이 기준 고정지출 구조",
             salaryBase,
             fixedTotal: asIsFixedTotal,
             disposableValue: asIsDisposableValue,
@@ -626,7 +620,7 @@ function App() {
         : activeTab === "to_be"
           ? h(HeroSummary, {
               title: "TO-BE 요약",
-              subtitle: "목표 구조를 반영한 TO-BE 고정지출 구조",
+              subtitle: "외벌이 기준 고정지출 구조",
               salaryBase,
               fixedTotal: toBeFixedTotal,
               disposableValue: toBeDisposableValue,

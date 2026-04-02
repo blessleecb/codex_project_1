@@ -319,7 +319,6 @@ function FixedExpensePanel({ fixedCategories, fixedLines, cards: providedCards, 
           "div",
           null,
           h("h3", null, "고정지출 상세"),
-          h("p", null, ".md 파일의 고정지출 섹션을 기준으로 구성"),
         ),
         h(
           "button",
@@ -659,11 +658,6 @@ function App() {
       h("p", { className: "eyebrow" }, "AUTO LEDGER"),
       h("h1", null, "고정지출 대시보드"),
       h(
-        "p",
-        { className: "hero-copy" },
-        "월급에서 고정지출이 얼마나 빠지고, 실제로 생활비로 얼마를 쓸 수 있는지 중심으로 다시 정리했습니다.",
-      ),
-      h(
         "div",
         { className: "tab-bar" },
         h(TabButton, { id: "as_is", activeTab, label: "AS-IS", onSelect: setActiveTab }),
@@ -673,18 +667,26 @@ function App() {
       activeTab === "as_is"
         ? h(HeroSummary, {
             title: "AS-IS 요약",
-            subtitle: "현재 실제 데이터 기준 월급, 고정지출, 생활비가용금액",
+            subtitle: "맞벌이 기준 고정지출 구조",
             salaryBase,
             fixedTotal: asIsFixedTotal,
             disposableValue: asIsDisposableValue,
           })
-        : h(HeroSummary, {
-            title: "TO-BE 요약",
-            subtitle: "목표 구조를 잡기 위한 기준값. 세부 조정은 다음 단계에서 반영",
-            salaryBase,
-            fixedTotal: toBeFixedTotal,
-            disposableValue: toBeDisposableValue,
-          }),
+        : activeTab === "to_be"
+          ? h(HeroSummary, {
+              title: "TO-BE 요약",
+              subtitle: "외벌이 기준 고정지출 구조",
+              salaryBase,
+              fixedTotal: toBeFixedTotal,
+              disposableValue: toBeDisposableValue,
+            })
+          : h(HeroSummary, {
+              title: "차이점 요약",
+              subtitle: "AS-IS와 TO-BE 사이에서 실제로 달라지는 지점만 비교",
+              salaryBase,
+              fixedTotal: toBeFixedTotal - asIsFixedTotal,
+              disposableValue: toBeDisposableValue - asIsDisposableValue,
+            }),
     ),
     error ? h("p", { className: "error-box" }, error) : null,
     activeTab === "as_is" && asIsCategories.length
