@@ -137,6 +137,12 @@ function buildAsIsCards(cards) {
 function buildToBeCards(cards) {
   return cards
     .map((card) => {
+      if (card.title === "자동차") {
+        const nextItems = card.items.filter((item) => item.label !== "주유 평균");
+        const total = nextItems.reduce((sum, item) => sum + toWonNumber(item.amount), 0);
+        return { ...card, amount: toWonText(total), items: nextItems };
+      }
+
       if (card.title === "용돈") {
         const nextItems = [
           { label: "이축복 용돈", amount: toWonText(300000) },
@@ -660,6 +666,33 @@ function App() {
   const toBeDisposableValue = salaryBase - toBeFixedTotal;
   const considerationDisposableValue = salaryBase - considerationFixedTotal;
   const diffCategories = buildDiffCategories(asIsCategories, toBeCategories);
+  let heroSummary = null;
+
+  if (activeTab === "as_is") {
+    heroSummary = h(HeroSummary, {
+      title: "AS-IS 요약",
+      subtitle: "맞벌이 기준 고정지출 구조",
+      salaryBase,
+      fixedTotal: asIsFixedTotal,
+      disposableValue: asIsDisposableValue,
+    });
+  } else if (activeTab === "to_be") {
+    heroSummary = h(HeroSummary, {
+      title: "TO-BE 요약",
+      subtitle: "외벌이 기준 고정지출 구조",
+      salaryBase,
+      fixedTotal: toBeFixedTotal,
+      disposableValue: toBeDisposableValue,
+    });
+  } else if (activeTab === "consideration") {
+    heroSummary = h(HeroSummary, {
+      title: "고려할 사항 요약",
+      subtitle: "TO-BE 기준에 예상 추가비용까지 반영한 고정지출 구조",
+      salaryBase,
+      fixedTotal: considerationFixedTotal,
+      disposableValue: considerationDisposableValue,
+    });
+  }
 
   return h(
     "main",
@@ -682,37 +715,7 @@ function App() {
         h(TabButton, { id: "diff", activeTab, label: "차이점", onSelect: setActiveTab }),
         h(TabButton, { id: "consideration", activeTab, label: "고려할 사항", onSelect: setActiveTab }),
       ),
-      activeTab === "as_is"
-        ? h(HeroSummary, {
-            title: "AS-IS 요약",
-            subtitle: "맞벌이 기준 고정지출 구조",
-            salaryBase,
-            fixedTotal: asIsFixedTotal,
-            disposableValue: asIsDisposableValue,
-          })
-        : activeTab === "to_be"
-          ? h(HeroSummary, {
-              title: "TO-BE 요약",
-              subtitle: "외벌이 기준 고정지출 구조",
-              salaryBase,
-              fixedTotal: toBeFixedTotal,
-              disposableValue: toBeDisposableValue,
-            })
-          : activeTab === "diff"
-            ? h(HeroSummary, {
-                title: "차이점 요약",
-                subtitle: "AS-IS와 TO-BE 사이에서 실제로 달라지는 지점만 비교",
-                salaryBase,
-                fixedTotal: toBeFixedTotal - asIsFixedTotal,
-                disposableValue: toBeDisposableValue - asIsDisposableValue,
-              })
-            : h(HeroSummary, {
-                title: "고려할 사항 요약",
-                subtitle: "TO-BE 기준에 예상 추가비용까지 반영한 고정지출 구조",
-                salaryBase,
-                fixedTotal: considerationFixedTotal,
-                disposableValue: considerationDisposableValue,
-              }),
+      heroSummary,
     ),
     activeTab === "as_is"
       ? h(FixedExpensePanel, {
