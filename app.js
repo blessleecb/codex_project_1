@@ -25,6 +25,17 @@ function formatWon(value) {
   return `${new Intl.NumberFormat("ko-KR").format(Math.abs(Math.round(value)))}원`;
 }
 
+function formatSignedWon(value) {
+  const rounded = Math.round(value);
+  if (rounded > 0) {
+    return `+${formatWon(rounded)}`;
+  }
+  if (rounded < 0) {
+    return `-${formatWon(rounded)}`;
+  }
+  return formatWon(rounded);
+}
+
 function parseSections(markdown) {
   const lines = markdown.split(/\r?\n/);
   const sections = new Map();
@@ -464,13 +475,13 @@ function DiffPanel({
       { className: "hero-grid" },
       h(InsightCard, {
         label: "고정지출 차이",
-        value: `${fixedDiff > 0 ? "+" : ""}${formatWon(fixedDiff)}`,
+        value: formatSignedWon(fixedDiff),
         meta: "TO-BE - AS-IS",
         tone: fixedDiff > 0 ? "warning" : "highlight",
       }),
       h(InsightCard, {
         label: "생활비가용금액 차이",
-        value: `${disposableDiff > 0 ? "+" : ""}${formatWon(disposableDiff)}`,
+        value: formatSignedWon(disposableDiff),
         meta: "TO-BE - AS-IS",
         tone: disposableDiff >= 0 ? "highlight" : "warning",
       }),
@@ -500,7 +511,7 @@ function DiffPanel({
           h(
             "div",
             { className: `diff-value ${item.diff >= 0 ? "is-up" : "is-down"}` },
-            `${item.diff > 0 ? "+" : ""}${formatWon(item.diff)}`,
+            formatSignedWon(item.diff),
           ),
         ),
       ),
@@ -534,7 +545,7 @@ function DiffPanel({
               h(
                 "strong",
                 { className: "fixed-detail-amount" },
-                `${item.diff > 0 ? "+" : ""}${formatWon(item.diff)}`,
+                formatSignedWon(item.diff),
               ),
             ),
             h(
@@ -709,15 +720,7 @@ function App() {
   } else if (activeTab === "to_be") {
     heroSummary = h(HeroSummary, {
       title: "TO-BE 요약",
-      subtitle: "외벌이 기준 고정지출 구조",
-      salaryBase,
-      fixedTotal: toBeFixedTotal,
-      disposableValue: toBeDisposableValue,
-    });
-  } else if (activeTab === "consideration") {
-    heroSummary = h(HeroSummary, {
-      title: "고려할 사항 요약",
-      subtitle: "TO-BE 기준에 예상 추가비용까지 반영한 고정지출 구조",
+      subtitle: "TO-BE 기준 고정지출 구조",
       salaryBase,
       fixedTotal: considerationFixedTotal,
       disposableValue: considerationDisposableValue,
@@ -742,8 +745,6 @@ function App() {
         { className: "tab-bar" },
         h(TabButton, { id: "as_is", activeTab, label: "AS-IS", onSelect: setActiveTab }),
         h(TabButton, { id: "to_be", activeTab, label: "TO-BE", onSelect: setActiveTab }),
-        h(TabButton, { id: "diff", activeTab, label: "차이점", onSelect: setActiveTab }),
-        h(TabButton, { id: "consideration", activeTab, label: "고려할 사항", onSelect: setActiveTab }),
       ),
       heroSummary,
     ),
@@ -757,34 +758,24 @@ function App() {
         })
       : null,
     activeTab === "to_be"
-      ? h(FixedExpensePanel, {
-          fixedCategories: toBeCategories,
-          cards: toBeCards,
-          title: "TO-BE 고정지출 구조",
-          subtitle: "조정된 목표 구조를 기준으로 본 카테고리별 월 지출 규모와 비중",
-        })
-      : null,
-    activeTab === "diff"
-      ? h(DiffPanel, {
-          diffCategories,
-          asIsCards,
-          toBeCards,
-          asIsFixedTotal,
-          toBeFixedTotal,
-          asIsDisposableValue,
-          toBeDisposableValue,
-        })
-      : null,
-    activeTab === "consideration"
       ? h(
           React.Fragment,
           null,
+          h(DiffPanel, {
+            diffCategories,
+            asIsCards,
+            toBeCards,
+            asIsFixedTotal,
+            toBeFixedTotal,
+            asIsDisposableValue,
+            toBeDisposableValue,
+          }),
           h(ExtraCostPreview, { card: considerationExtraCard }),
           h(FixedExpensePanel, {
             fixedCategories: considerationCategories,
             cards: considerationCards,
-            title: "고려할 사항 고정지출 구조",
-            subtitle: "TO-BE 고정지출에 예상 추가비용 항목을 더한 구조",
+            title: "TO-BE 고정지출 구조",
+            subtitle: "예상 추가비용까지 반영한 TO-BE 고정지출 구조",
           }),
         )
       : null,
