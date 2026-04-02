@@ -170,14 +170,14 @@ function buildConsiderationCards(cards) {
     items: [...card.items],
   }));
   const extraItems = [
-    { label: "수연 보험", amount: "약 100,000원" },
-    { label: "수연 통신비", amount: "약 60,000원" },
-    { label: "정수기", amount: "약 30,000원" },
+    { label: "수연 보험", amount: "131,586원" },
+    { label: "수연 통신비", amount: "54,000원" },
+    { label: "정수기", amount: "37,900원" },
   ];
   const remainingCards = nextCards.filter((card) => card.title !== "예상추가비용");
   const extraCard = {
     title: "예상추가비용",
-    amount: toWonText(190000),
+    amount: toWonText(223486),
     items: extraItems,
   };
 
