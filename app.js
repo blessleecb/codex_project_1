@@ -603,6 +603,11 @@ function App() {
       h("p", { className: "eyebrow" }, "AUTO LEDGER"),
       h("h1", null, "고정지출 대시보드"),
       h(
+        "p",
+        { className: "hero-copy" },
+        "2025.04 ~ 2026.04 간 신한,현대,KB 카드 이용내역 및 SC제일은행,토스뱅크,신한은행 계좌 데이터를 기준으로 분석",
+      ),
+      h(
         "div",
         { className: "tab-bar" },
         h(TabButton, { id: "as_is", activeTab, label: "AS-IS", onSelect: setActiveTab }),
