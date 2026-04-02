@@ -14,6 +14,7 @@ const FIXED_CATEGORY_COLORS = {
   연금: "#7e74c9",
   청년도약계좌: "#85725c",
   용돈: "#bf8c34",
+  예상추가비용: "#4c5a6f",
 };
 
 function parseWon(value) {
@@ -161,6 +162,26 @@ function buildToBeCards(cards) {
       return card;
     })
     .filter((card) => card.items.length || toWonNumber(card.amount) > 0);
+}
+
+function buildConsiderationCards(cards) {
+  const nextCards = buildToBeCards(cards).map((card) => ({
+    ...card,
+    items: [...card.items],
+  }));
+  const extraItems = [
+    { label: "수연 보험", amount: "약 100,000원" },
+    { label: "수연 통신비", amount: "약 60,000원" },
+    { label: "정수기", amount: "약 30,000원" },
+  ];
+  const remainingCards = nextCards.filter((card) => card.title !== "예상추가비용");
+  const extraCard = {
+    title: "예상추가비용",
+    amount: toWonText(190000),
+    items: extraItems,
+  };
+
+  return [extraCard, ...remainingCards];
 }
 
 function buildDiffCategories(asIsCategories, toBeCategories) {
@@ -371,6 +392,47 @@ function FixedExpensePanel({ fixedCategories, fixedLines, cards: providedCards, 
             ),
           )
         : h("div", { className: "detail-collapsed" }, "열기를 누르면 고정지출 상세 항목이 나타납니다."),
+    ),
+  );
+}
+
+function ExtraCostPreview({ card }) {
+  if (!card) {
+    return null;
+  }
+
+  return h(
+    "section",
+    { className: "panel" },
+    h(
+      "div",
+      { className: "panel-head" },
+      h("h2", null, "예상 추가비용"),
+    ),
+    h(
+      "article",
+      {
+        className: "fixed-detail-card extra-cost-card",
+        style: { "--card-accent": FIXED_CATEGORY_COLORS[card.title] || "#4c5a6f" },
+      },
+      h(
+        "div",
+        { className: "fixed-detail-head" },
+        h("span", { className: "fixed-detail-title" }, card.title),
+        h("strong", { className: "fixed-detail-amount" }, card.amount),
+      ),
+      h(
+        "div",
+        { className: "fixed-detail-items" },
+        card.items.map((item) =>
+          h(
+            "div",
+            { className: "fixed-detail-item", key: `${card.title}-${item.label}` },
+            h("span", { className: "fixed-detail-item-label" }, item.label),
+            h("span", { className: "fixed-detail-item-amount" }, item.amount),
+          ),
+        ),
+      ),
     ),
   );
 }
@@ -641,12 +703,17 @@ function App() {
   const fixedCards = parseFixedDetailCards(fixedLines);
   const asIsCards = buildAsIsCards(fixedCards);
   const toBeCards = buildToBeCards(fixedCards);
+  const considerationCards = buildConsiderationCards(fixedCards);
+  const considerationExtraCard = considerationCards.find((card) => card.title === "예상추가비용");
   const asIsCategories = buildCategoriesFromCards(asIsCards);
   const toBeCategories = buildCategoriesFromCards(toBeCards);
+  const considerationCategories = buildCategoriesFromCards(considerationCards);
   const asIsFixedTotal = asIsCategories.reduce((sum, item) => sum + item.value, 0);
   const asIsDisposableValue = salaryBase - asIsFixedTotal;
   const toBeFixedTotal = toBeCategories.reduce((sum, item) => sum + item.value, 0);
   const toBeDisposableValue = salaryBase - toBeFixedTotal;
+  const considerationFixedTotal = considerationCategories.reduce((sum, item) => sum + item.value, 0);
+  const considerationDisposableValue = salaryBase - considerationFixedTotal;
   const diffCategories = buildDiffCategories(asIsCategories, toBeCategories);
 
   return h(
@@ -668,6 +735,7 @@ function App() {
         h(TabButton, { id: "as_is", activeTab, label: "AS-IS", onSelect: setActiveTab }),
         h(TabButton, { id: "to_be", activeTab, label: "TO-BE", onSelect: setActiveTab }),
         h(TabButton, { id: "diff", activeTab, label: "차이점", onSelect: setActiveTab }),
+        h(TabButton, { id: "consideration", activeTab, label: "고려할 사항", onSelect: setActiveTab }),
       ),
       activeTab === "as_is"
         ? h(HeroSummary, {
@@ -685,13 +753,21 @@ function App() {
               fixedTotal: toBeFixedTotal,
               disposableValue: toBeDisposableValue,
             })
-          : h(HeroSummary, {
-              title: "차이점 요약",
-              subtitle: "AS-IS와 TO-BE 사이에서 실제로 달라지는 지점만 비교",
-              salaryBase,
-              fixedTotal: toBeFixedTotal - asIsFixedTotal,
-              disposableValue: toBeDisposableValue - asIsDisposableValue,
-            }),
+          : activeTab === "diff"
+            ? h(HeroSummary, {
+                title: "차이점 요약",
+                subtitle: "AS-IS와 TO-BE 사이에서 실제로 달라지는 지점만 비교",
+                salaryBase,
+                fixedTotal: toBeFixedTotal - asIsFixedTotal,
+                disposableValue: toBeDisposableValue - asIsDisposableValue,
+              })
+            : h(HeroSummary, {
+                title: "고려할 사항 요약",
+                subtitle: "TO-BE 기준에 예상 추가비용까지 반영한 고정지출 구조",
+                salaryBase,
+                fixedTotal: considerationFixedTotal,
+                disposableValue: considerationDisposableValue,
+              }),
     ),
     error ? h("p", { className: "error-box" }, error) : null,
     activeTab === "as_is" && asIsCategories.length
@@ -722,6 +798,20 @@ function App() {
           asIsDisposableValue,
           toBeDisposableValue,
         })
+      : null,
+    activeTab === "consideration"
+      ? h(
+          React.Fragment,
+          null,
+          h(ExtraCostPreview, { card: considerationExtraCard }),
+          h(FixedExpensePanel, {
+            fixedCategories: considerationCategories,
+            fixedLines: [],
+            cards: considerationCards,
+            title: "고려할 사항 고정지출 구조",
+            subtitle: "TO-BE 고정지출에 예상 추가비용 항목을 더한 구조",
+          }),
+        )
       : null,
   );
 }
