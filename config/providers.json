@@ -1,0 +1,164 @@
+[
+  {
+    "id": "tossbank",
+    "kind": "bank",
+    "name": "토스뱅크",
+    "driver": "json_api",
+    "base_url": "https://api.example.com",
+    "transactions_path": "/v1/accounts/tossbank/transactions",
+    "auth": {
+      "type": "bearer_env",
+      "env": "TOSSBANK_API_TOKEN"
+    },
+    "params": {
+      "from": "{start_date}",
+      "to": "{end_date}"
+    },
+    "field_map": {
+      "items_path": "transactions",
+      "transaction_id": "id",
+      "posted_at": "date",
+      "amount": "amount",
+      "currency": "currency",
+      "merchant": "merchant",
+      "description": "description",
+      "account_name": "account_name",
+      "direction": "direction"
+    }
+  },
+  {
+    "id": "scbank",
+    "kind": "bank",
+    "name": "SC제일은행",
+    "driver": "json_api",
+    "base_url": "https://api.example.com",
+    "transactions_path": "/v1/accounts/scbank/transactions",
+    "auth": {
+      "type": "bearer_env",
+      "env": "SCBANK_API_TOKEN"
+    },
+    "params": {
+      "from": "{start_date}",
+      "to": "{end_date}"
+    },
+    "field_map": {
+      "items_path": "transactions",
+      "transaction_id": "id",
+      "posted_at": "date",
+      "amount": "amount",
+      "currency": "currency",
+      "merchant": "merchant",
+      "description": "description",
+      "account_name": "account_name",
+      "direction": "direction"
+    }
+  },
+  {
+    "id": "shinhan-bank",
+    "kind": "bank",
+    "name": "신한은행",
+    "driver": "json_api",
+    "base_url": "https://api.example.com",
+    "transactions_path": "/v1/accounts/shinhan-bank/transactions",
+    "auth": {
+      "type": "bearer_env",
+      "env": "SHINHAN_BANK_API_TOKEN"
+    },
+    "params": {
+      "from": "{start_date}",
+      "to": "{end_date}"
+    },
+    "field_map": {
+      "items_path": "transactions",
+      "transaction_id": "id",
+      "posted_at": "date",
+      "amount": "amount",
+      "currency": "currency",
+      "merchant": "merchant",
+      "description": "description",
+      "account_name": "account_name",
+      "direction": "direction"
+    }
+  },
+  {
+    "id": "hyundai-card",
+    "kind": "card",
+    "name": "현대카드",
+    "driver": "json_api",
+    "base_url": "https://api.example.com",
+    "transactions_path": "/v1/cards/hyundai-card/transactions",
+    "auth": {
+      "type": "bearer_env",
+      "env": "HYUNDAI_CARD_API_TOKEN"
+    },
+    "params": {
+      "from": "{start_date}",
+      "to": "{end_date}"
+    },
+    "field_map": {
+      "items_path": "transactions",
+      "transaction_id": "id",
+      "posted_at": "date",
+      "amount": "amount",
+      "currency": "currency",
+      "merchant": "merchant",
+      "description": "description",
+      "account_name": "card_name",
+      "direction": "direction"
+    }
+  },
+  {
+    "id": "shinhan-card",
+    "kind": "card",
+    "name": "신한카드",
+    "driver": "json_api",
+    "base_url": "https://api.example.com",
+    "transactions_path": "/v1/cards/shinhan-card/transactions",
+    "auth": {
+      "type": "bearer_env",
+      "env": "SHINHAN_CARD_API_TOKEN"
+    },
+    "params": {
+      "from": "{start_date}",
+      "to": "{end_date}"
+    },
+    "field_map": {
+      "items_path": "transactions",
+      "transaction_id": "id",
+      "posted_at": "date",
+      "amount": "amount",
+      "currency": "currency",
+      "merchant": "merchant",
+      "description": "description",
+      "account_name": "card_name",
+      "direction": "direction"
+    }
+  },
+  {
+    "id": "kb-card",
+    "kind": "card",
+    "name": "KB국민카드",
+    "driver": "json_api",
+    "base_url": "https://api.example.com",
+    "transactions_path": "/v1/cards/kb-card/transactions",
+    "auth": {
+      "type": "bearer_env",
+      "env": "KB_CARD_API_TOKEN"
+    },
+    "params": {
+      "from": "{start_date}",
+      "to": "{end_date}"
+    },
+    "field_map": {
+      "items_path": "transactions",
+      "transaction_id": "id",
+      "posted_at": "date",
+      "amount": "amount",
+      "currency": "currency",
+      "merchant": "merchant",
+      "description": "description",
+      "account_name": "card_name",
+      "direction": "direction"
+    }
+  }
+]

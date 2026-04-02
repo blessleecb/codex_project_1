@@ -1,0 +1,3 @@
+[console_scripts]
+auto-ledger-dashboard = auto_ledger.local_dashboard:main
+auto-ledger-local = auto_ledger.local_cli:main

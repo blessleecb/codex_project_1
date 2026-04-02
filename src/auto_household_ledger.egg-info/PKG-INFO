@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: auto-household-ledger
+Version: 0.1.0
+Summary: Automatic household ledger sync for Korean bank and card transactions into Notion.
+Requires-Python: >=3.9
+Requires-Dist: requests<3,>=2.32.0

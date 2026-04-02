@@ -1,0 +1,22 @@
+{
+  "selected_inputs": {
+    "hyundai_card": "excel/hyundaicard_202604011118521146506431_1070.xlsx",
+    "shinhan_cards": [
+      "excel/Shinhancard_20260401130623.xls",
+      "excel/Shinhancard_20260401130658.xls"
+    ],
+    "kb_card": "excel/카드이용내역_20250401_20260401.xls",
+    "account_exports": [
+      "excel/inquiry_39420014951_20260401144942.xls",
+      "excel/inquiry_39420014951_20260401145025.xls"
+    ],
+    "shinhan_bank_exports": [
+      "excel/신한은행_거래내역조회_20260401150044.xls",
+      "excel/신한은행_거래내역조회_20260401150134.xls",
+      "excel/신한은행_거래내역조회_20260401150215.xls",
+      "excel/신한은행_거래내역조회_20260401150244.xls"
+    ],
+    "pdf_text": "reports/pdf_extracted_text.txt",
+    "pdf_source": "excel/거래내역 확인서(국문).pdf"
+  }
+}

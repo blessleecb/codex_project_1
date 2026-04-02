@@ -1,0 +1,22 @@
+[project]
+name = "auto-household-ledger"
+version = "0.1.0"
+description = "Automatic household ledger sync for Korean bank and card transactions into Notion."
+requires-python = ">=3.9"
+dependencies = [
+  "requests>=2.32.0,<3",
+]
+
+[project.scripts]
+auto-ledger-local = "auto_ledger.local_cli:main"
+auto-ledger-dashboard = "auto_ledger.local_dashboard:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
