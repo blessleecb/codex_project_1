@@ -1,6 +1,5 @@
-import React, { useState } from "https://esm.sh/react@18.3.1";
+import React, { useEffect, useState } from "https://esm.sh/react@18.3.1";
 import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
-import { LEDGER_SUMMARY_MARKDOWN } from "./data.js";
 
 const h = React.createElement;
 
@@ -644,14 +643,45 @@ function HeroSummary({ title, subtitle, salaryBase, fixedTotal, disposableValue 
 }
 
 function App() {
+  const [fixedLines, setFixedLines] = useState([]);
+  const [salaryBase, setSalaryBase] = useState(0);
   const [activeTab, setActiveTab] = useState("as_is");
+  const [error, setError] = useState("");
 
-  const sectionMap = parseSections(LEDGER_SUMMARY_MARKDOWN);
-  const fixedLines = sectionMap.get("고정지출") || [];
-  const disposableLines = sectionMap.get("생활비가용금액") || [];
+  useEffect(() => {
+    let active = true;
+
+    fetch("./reports/ledger_summary.md")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("보고서 파일을 불러오지 못했습니다.");
+        }
+        return response.text();
+      })
+      .then((markdown) => {
+        if (!active) {
+          return;
+        }
+
+        const sectionMap = parseSections(markdown);
+        const currentFixedLines = sectionMap.get("고정지출") || [];
+        const disposableLines = sectionMap.get("생활비가용금액") || [];
+
+        setFixedLines(currentFixedLines);
+        setSalaryBase(extractMetric(disposableLines, "월 급여 기준:"));
+      })
+      .catch((fetchError) => {
+        if (active) {
+          setError(fetchError.message);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const fixedCards = parseFixedDetailCards(fixedLines);
-  const salaryBase = extractMetric(disposableLines, "월 급여 기준:");
   const asIsCards = buildAsIsCards(fixedCards);
   const toBeCards = buildToBeCards(fixedCards);
   const considerationCards = buildConsiderationCards(fixedCards);
@@ -717,6 +747,7 @@ function App() {
       ),
       heroSummary,
     ),
+    error ? h("p", { className: "error-box" }, error) : null,
     activeTab === "as_is"
       ? h(FixedExpensePanel, {
           fixedCategories: asIsCategories,
